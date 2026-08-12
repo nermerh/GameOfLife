@@ -1,10 +1,12 @@
+from operator import truediv
+
 import pygame
 import numpy as np
 import renderer
 import logic
 
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 800
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
 CELL_SIZE = 5
 FPS = 60
 
@@ -22,6 +24,8 @@ def main():
     grid = np.random.choice([0, 1], size=(rows, cols), p=[0.8, 0.2])
 
     running = True
+    paused = False
+    space_down = False
 
     while running:
 
@@ -30,7 +34,19 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        grid = logic.calculate_next_generation(grid)
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_SPACE]:
+
+            if not space_down:
+                space_down = True
+                paused = not paused
+
+        elif space_down:
+            space_down = False
+
+        if not paused:
+            grid = logic.calculate_next_generation(grid)
 
         renderer.draw_grid(screen, grid, CELL_SIZE)
 
